@@ -1,13 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
-    public List<GameObject> Enemies = new List<GameObject>();
-    GameObject target;
+    private List<GameObject> Enemies = new List<GameObject>();
+    private GameObject target;
+    public static Manager instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     void Start()
     {
+        var enemies = GameObject.FindGameObjectsWithTag("enemy");
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            Enemies.Add(enemies[i]);
+        }
         Find();
     }
 
@@ -51,6 +64,13 @@ public class Manager : MonoBehaviour
             target = null;
             dist = float.MaxValue;
         }
+    }
+
+    public void UpdateEnemiyList(GameObject enemyObject)
+    {
+     
+        Enemies.Remove(enemyObject);
+        Find();
     }
 
 }

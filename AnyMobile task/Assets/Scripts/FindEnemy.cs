@@ -1,16 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FindEnemy : MonoBehaviour
 {
-    public Status status;
+    [HideInInspector] public Status status;
     private bool go = true;
-    public GameObject TargetObject = null;
+    [HideInInspector] public GameObject TargetObject = null;
+    public float health;
+    public float damage;
+    private float takeDamage;
+    private Slider healthBar;
 
 
     void Start()
     {
+        healthBar = transform.GetChild(0).transform.GetChild(0).GetComponent<Slider>();
+        healthBar.maxValue = health;
+        healthBar.value = health;
         status = Status.free;
     }
 
@@ -18,15 +26,23 @@ public class FindEnemy : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("enemy"))
         {
-            go = false;
+            takeDamage = collision.gameObject.GetComponent<FindEnemy>().damage;
         }
     }
 
-    private void OnCollisionExit(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("enemy"))
         {
-            go = true;
+            health -= takeDamage;
+            healthBar.value = health;
+            if (health <= 0)
+            {
+                collision.gameObject.GetComponent<FindEnemy>().status = Status.free;
+                collision.gameObject.GetComponent<FindEnemy>().TargetObject = null;
+                Manager.instance.UpdateEnemiyList(this.gameObject);
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -34,7 +50,7 @@ public class FindEnemy : MonoBehaviour
     void Update()
     {
         if(TargetObject!= null)
-        transform.position = go ? Vector3.MoveTowards(transform.position, TargetObject.transform.position, 0.05f) : transform.position;
+        transform.position = Vector3.MoveTowards(transform.position, TargetObject.transform.position, 0.05f);
     }
 
 
