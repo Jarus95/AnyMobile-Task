@@ -61,7 +61,7 @@ public class FindEnemy : MonoBehaviour
     void Update()
     {
         if(TargetObject!= null)
-        transform.position =  go ? Vector3.MoveTowards(transform.position, TargetObject.transform.position, 0.05f): Vector3.MoveTowards(transform.position, TargetObject.transform.position, -0.005f);
+        transform.position =  go ? Vector3.MoveTowards(transform.position, TargetObject.transform.position, 0.05f): Vector3.MoveTowards(transform.position, TargetObject.transform.position, -0.0005f);
     }
 
 
