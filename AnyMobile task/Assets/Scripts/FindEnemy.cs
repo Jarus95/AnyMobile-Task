@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class FindEnemy : MonoBehaviour
 {
     [HideInInspector] public Status status;
-    private bool go = true;
+    public bool go = true;
     [HideInInspector] public GameObject TargetObject = null;
     public float health;
     public float damage;
@@ -26,19 +26,30 @@ public class FindEnemy : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("enemy"))
         {
+            go = false;
             takeDamage = collision.gameObject.GetComponent<FindEnemy>().damage;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("enemy"))
+        {
+            go = true;
+           
         }
     }
 
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("enemy"))
-        {
+        { 
             health -= takeDamage;
             healthBar.value = health;
             if (health <= 0)
             {
                 collision.gameObject.GetComponent<FindEnemy>().status = Status.free;
+                collision.gameObject.GetComponent<FindEnemy>().go = true;
                 collision.gameObject.GetComponent<FindEnemy>().TargetObject = null;
                 Manager.instance.UpdateEnemiyList(this.gameObject);
                 Destroy(gameObject);
@@ -50,7 +61,7 @@ public class FindEnemy : MonoBehaviour
     void Update()
     {
         if(TargetObject!= null)
-        transform.position = Vector3.MoveTowards(transform.position, TargetObject.transform.position, 0.05f);
+        transform.position =  go ? Vector3.MoveTowards(transform.position, TargetObject.transform.position, 0.05f): Vector3.MoveTowards(transform.position, TargetObject.transform.position, -0.005f);
     }
 
 
